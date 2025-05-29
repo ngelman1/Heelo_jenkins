@@ -1,8 +1,28 @@
-// scripted_try/Jenkinsfile - Part 1: The 'node' Block
+// scripted_try/Jenkinsfile - Part 2: Checkout and Stages for Visualization
 
-// The 'node' block allocates an executor (agent) and a workspace.
-// Without specifying a label, it runs on any available agent (like 'agent any' in Declarative).
 node {
-    echo 'Hello from inside the node block!'
-    echo "Current workspace: ${WORKSPACE}" // WORKSPACE is a built-in env var
+    // Checkout SCM (Source Code Management)
+    stage('Checkout') { // 'stage' block for visualization
+        echo 'Checking out source code...'
+        // 'checkout scm' is a special step that tells Jenkins to check out the SCM
+        // configured for this job (your Git repo).
+        checkout scm
+        echo 'Source code checked out successfully.'
+        sh 'ls -F' // List files in the workspace to confirm checkout
+    }
+
+    stage('Build') {
+        echo 'Starting the build process...'
+        sh 'echo "Simulating application compilation..."'
+    }
+
+    stage('Test') {
+        echo 'Running automated tests...'
+        sh 'echo "Running unit and integration tests..."'
+    }
+
+    stage('Deploy') {
+        echo 'Initiating deployment...'
+        sh 'echo "Deploying to development environment..."'
+    }
 }
