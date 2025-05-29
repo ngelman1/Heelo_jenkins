@@ -1,0 +1,8 @@
+// scripted_try/Jenkinsfile - Part 1: The 'node' Block
+
+// The 'node' block allocates an executor (agent) and a workspace.
+// Without specifying a label, it runs on any available agent (like 'agent any' in Declarative).
+node {
+    echo 'Hello from inside the node block!'
+    echo "Current workspace: ${WORKSPACE}" // WORKSPACE is a built-in env var
+}
