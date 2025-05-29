@@ -29,4 +29,26 @@ pipeline {
         }
       
     }
+
+    post {
+        always {
+            echo 'Pipeline finished. This always runs, for cleanup or final reports.'
+        }
+
+        success {
+            echo 'Hooray! The pipeline succeeded!'
+        }
+  
+        failure {
+            echo 'Oh no! The pipeline failed. Check logs for errors.'
+        }
+   
+        changed {
+            echo 'Pipeline status changed since last run.'
+        }
+
+        aborted {
+            echo 'Pipeline was aborted by a user.'
+        }
+    }
 }
