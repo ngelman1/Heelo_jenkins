@@ -1,28 +1,44 @@
-// scripted_try/Jenkinsfile - Part 2: Checkout and Stages for Visualization
+// scripted_try/Jenkinsfile - Part 3: Control Flow and Variables
 
 node {
-    // Checkout SCM (Source Code Management)
-    stage('Checkout') { // 'stage' block for visualization
-        echo 'Checking out source code...'
-        // 'checkout scm' is a special step that tells Jenkins to check out the SCM
-        // configured for this job (your Git repo).
+    // Define a variable using 'def' (Groovy's keyword for defining variables)
+    def targetEnvironment = 'dev' // You could make this a parameter later
+    def shouldSkipTests = false // Boolean variable
+
+    stage('Checkout') {
         checkout scm
-        echo 'Source code checked out successfully.'
-        sh 'ls -F' // List files in the workspace to confirm checkout
     }
 
     stage('Build') {
-        echo 'Starting the build process...'
-        sh 'echo "Simulating application compilation..."'
+        echo 'Building application...'
+        sh 'echo "Build complete."'
     }
 
-    stage('Test') {
-        echo 'Running automated tests...'
-        sh 'echo "Running unit and integration tests..."'
+    stage('Conditional Test') {
+        // Use an 'if' statement to conditionally run steps
+        if (shouldSkipTests) {
+            echo 'Tests are being skipped as requested.'
+        } else {
+            echo 'Running tests...'
+            sh 'echo "Running unit tests..."'
+            // Simulate a test failure based on condition
+            if (targetEnvironment == 'prod') {
+                echo "WARNING: Production environment detected. Ensuring rigorous tests."
+                // In real life, maybe run more tests or fail if not enough coverage
+            }
+        }
     }
 
-    stage('Deploy') {
-        echo 'Initiating deployment...'
-        sh 'echo "Deploying to development environment..."'
+    stage('Deploy to Environment') {
+        echo "Deploying to: ${targetEnvironment}" // Use the Groovy variable in echo
+        // Use 'if/else if/else' for different deployment logic
+        if (targetEnvironment == 'dev') {
+            sh 'echo "Deploying to development environment (fast)."'
+        } else if (targetEnvironment == 'staging') {
+            sh 'echo "Deploying to staging environment (with approvals)."'
+        } else {
+            sh 'echo "Deploying to unknown environment: ${targetEnvironment}!"'
+            // In a real pipeline, you'd throw an error or handle invalid environment
+        }
     }
 }
