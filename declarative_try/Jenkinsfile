@@ -1,55 +1,40 @@
-// Jenkinsfile - Part 1: Basic Structure
+// Jenkinsfile - Part 4: Environment Variables
 
 pipeline {
-
     agent any
 
-    // 'stages' is a mandatory block that contains one or more 'stage' blocks.
+    // 'environment' block: Defines environment variables accessible throughout the pipeline.
+    environment {
+        // Define a simple variable
+        APP_VERSION = '1.0.0'
+        BUILD_IDENTIFIER = "#${env.BUILD_NUMBER}" // 'env' is a built-in object for env vars
+    }
+
     stages {
-       
-        stage('build'){
-            steps{
-                echo 'Starting the build process...'
-                sh 'echo "Simulating application compilation..."'
+        stage('Build') {
+            steps {
+                echo "Building application version: ${env.APP_VERSION}"
+                echo "Build ID: ${env.BUILD_IDENTIFIER}"
+                sh 'echo "Simulating compilation for ${APP_VERSION}"'
             }
         }
-
-        stage('Test'){
-            steps{
-                echo 'Running automated tests...'
-                sh 'echo "Running unit and integration tests..."'
-                sh 'exit 1'
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                sh 'echo "Running tests with BUILD_IDENTIFIER: ${BUILD_IDENTIFIER}"'
             }
         }
-
-        stage('deploy'){
-            steps{
+        stage('Deploy') {
+            steps {
                 echo 'Initiating deployment...'
-                sh 'echo "Deploying to development environment..."'
+                sh "echo 'Deploying version ${APP_VERSION} to environment ${env.BUILD_IDENTIFIER}'"
             }
         }
-      
     }
 
     post {
         always {
-            echo 'Pipeline finished. This always runs, for cleanup or final reports.'
-        }
-
-        success {
-            echo 'Hooray! The pipeline succeeded!'
-        }
-  
-        failure {
-            echo 'Oh no! The pipeline failed. Check logs for errors.'
-        }
-   
-        changed {
-            echo 'Pipeline status changed since last run.'
-        }
-
-        aborted {
-            echo 'Pipeline was aborted by a user.'
+            echo 'Pipeline finished.'
         }
     }
 }
