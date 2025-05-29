@@ -18,6 +18,7 @@ pipeline {
             steps{
                 echo 'Running automated tests...'
                 sh 'echo "Running unit and integration tests..."'
+                sh 'exit 1'
             }
         }
 
