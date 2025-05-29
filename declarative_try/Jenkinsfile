@@ -1,12 +1,32 @@
 // Jenkinsfile - Part 1: Basic Structure
 
 pipeline {
-    // 'agent' defines where the entire pipeline, or a specific stage, will execute.
-    // 'any' means Jenkins can run it on any available agent, including the controller.
+
     agent any
 
     // 'stages' is a mandatory block that contains one or more 'stage' blocks.
     stages {
-        // We'll add our build steps here later.
+       
+        stage('build'){
+            steps{
+                echo 'Starting the build process...'
+                sh 'echo "Simulating application compilation..."'
+            }
+        }
+
+        stage('Test'){
+            steps{
+                echo 'Running automated tests...'
+                sh 'echo "Running unit and integration tests..."'
+            }
+        }
+
+        stage('deploy'){
+            steps{
+                echo 'Initiating deployment...'
+                sh 'echo "Deploying to development environment..."'
+            }
+        }
+      
     }
 }
