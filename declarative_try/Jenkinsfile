@@ -27,7 +27,7 @@ pipeline {
 
     stages {
 
-        tage('Hello from My Custom Library') {
+        stage('Hello from My Custom Library') {
             steps {
                 echo 'Calling a function from my custom shared library...'
                 sayHello('Awesome User') // This function comes from vars/sayHello.groovy in YOUR library
