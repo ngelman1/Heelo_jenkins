@@ -1,44 +1,54 @@
-// scripted_try/Jenkinsfile - Part 3: Control Flow and Variables
+// scripted_try/Jenkinsfile - Part 4: Error Handling and Post-Build
 
 node {
-    // Define a variable using 'def' (Groovy's keyword for defining variables)
-    def targetEnvironment = 'dev' // You could make this a parameter later
-    def shouldSkipTests = false // Boolean variable
+    def buildStatus = 'SUCCESS' // Initialize status
 
-    stage('Checkout') {
-        checkout scm
-    }
-
-    stage('Build') {
-        echo 'Building application...'
-        sh 'echo "Build complete."'
-    }
-
-    stage('Conditional Test') {
-        // Use an 'if' statement to conditionally run steps
-        if (shouldSkipTests) {
-            echo 'Tests are being skipped as requested.'
-        } else {
-            echo 'Running tests...'
-            sh 'echo "Running unit tests..."'
-            // Simulate a test failure based on condition
-            if (targetEnvironment == 'prod') {
-                echo "WARNING: Production environment detected. Ensuring rigorous tests."
-                // In real life, maybe run more tests or fail if not enough coverage
-            }
+    try {
+        stage('Checkout') {
+            checkout scm
         }
-    }
 
-    stage('Deploy to Environment') {
-        echo "Deploying to: ${targetEnvironment}" // Use the Groovy variable in echo
-        // Use 'if/else if/else' for different deployment logic
-        if (targetEnvironment == 'dev') {
-            sh 'echo "Deploying to development environment (fast)."'
-        } else if (targetEnvironment == 'staging') {
-            sh 'echo "Deploying to staging environment (with approvals)."'
-        } else {
-            sh 'echo "Deploying to unknown environment: ${targetEnvironment}!"'
-            // In a real pipeline, you'd throw an error or handle invalid environment
+        stage('Build') {
+            echo 'Building application...'
+            // Simulate a build failure sometimes
+            // if (new Random().nextBoolean()) { // Uncomment to randomly fail build
+            //     error('Simulating a build failure!') // 'error' step fails the pipeline
+            // }
+            sh 'echo "Build complete."'
+        }
+
+        stage('Test') {
+            echo 'Running tests...'
+            // Simulate a test failure sometimes
+            // if (new Random().nextBoolean()) { // Uncomment to randomly fail tests
+            //     sh 'exit 1' // Exiting with non-zero code fails the shell step
+            // }
+            sh 'echo "Tests passed."'
+        }
+
+        stage('Deploy') {
+            echo 'Deploying application...'
+            sh 'echo "Deployment complete."'
+        }
+
+    } catch (Exception e) {
+        // 'catch' block executes if any step in the 'try' block fails
+        buildStatus = 'FAILURE'
+        echo "Pipeline caught an error: ${e.getMessage()}"
+        currentBuild.result = 'FAILURE' // Explicitly set Jenkins build result to FAILURE
+    } finally {
+        // 'finally' block always executes, regardless of success or failure
+        stage('Cleanup & Notify') { // A final stage for visualization
+            echo 'Running final cleanup and notifications...'
+            if (buildStatus == 'SUCCESS') {
+                echo 'Pipeline completed successfully. Sending success notification.'
+                // notify_success() // Placeholder for a notification function
+            } else {
+                echo 'Pipeline failed. Sending failure notification.'
+                // notify_failure() // Placeholder for a notification function
+            }
+            sh 'echo "Cleaning up workspace..."'
+            cleanWs() // Step from Pipeline Utility Steps plugin to clean workspace
         }
     }
 }
