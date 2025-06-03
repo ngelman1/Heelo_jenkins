@@ -1,5 +1,6 @@
 // Jenkinsfile - Part 5: Options and Parameters
 
+@Library('my-try-lib') _ 
 pipeline {
     agent any
 
